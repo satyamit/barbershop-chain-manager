@@ -1,0 +1,1 @@
+# barbershop-chain-manager
