@@ -9,6 +9,9 @@ import {BrowserRouter,Routes,Route} from 'react-router-dom';
 import Login from './Login.jsx';
 import CreateBranch from './CreateBranch.jsx';
 import BranchList from './BranchList.jsx';
+import ChairDetails from './ChairDetails.jsx';
+import AddService from './AddService.jsx';
+import ChairOverview from './ChairOverview.jsx';
 
 function App() {
   //const [count, setCount] = useState(0)
@@ -22,6 +25,9 @@ function App() {
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/createbranch' element={<CreateBranch/>}></Route>
             <Route path='/branchlist' element={<BranchList/>}></Route>
+            <Route path='/chairdetails' element={<ChairDetails/>}></Route>
+            <Route path='/addservice' element={<AddService/>}></Route>
+            <Route path='/chairoverview' element={<ChairOverview/>}></Route>
           </Routes>
         </BrowserRouter>
       </div>

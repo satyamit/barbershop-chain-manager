@@ -8,7 +8,10 @@ const CreateBranch = () => {
     const[chairs,setChairs] = useState('');
     const handleSubmit = (e) =>{
         e.preventDefault();
-        axios.post('http://localhost:3001/createbranch',{name,location,chairs})
+        axios.post('http://localhost:3001/createbranch',{
+            name,
+            location,
+            chairs})
         .then(result=> console.log("create branch result",result))
         .catch(err=> console.log("create branch error",err))
     }
