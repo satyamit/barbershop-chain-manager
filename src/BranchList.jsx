@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./CSS/BranchList.css";
 
 const BranchList = () => {
   const [branches, setBranches] = useState([]);
@@ -18,6 +19,7 @@ const BranchList = () => {
 
   const handleDetailsClick = (branch) => {
     // navigate(`/chairdetails/${branchId}`,{state:{chairCount}});
+    console.log("branch ids of all branches inside branchlist",branch);
     navigate(`/chairdetails`, {
       state: {
         branchId: branch._id,
@@ -27,26 +29,35 @@ const BranchList = () => {
     });
   };
 
-  const handleAllChairOverviewClick = (branch) => {
+  const handleAllChairOverviewClick = () => {
     // navigate(`/chairoverview`, {
     //   state: {
     //     branchId, branchName },
     // });
     navigate(`/chairoverview`, {
       state: {
-        branchId: branch._id,
-        branchName: branch.name,
+        // branchId: branch._id,
+        // branchName: branch.name,
+        
       },
     });
   };
 
+  const handleReportsClick = (branch) =>{
+    navigate("/dailyreport",{
+      state:{
+        branchId: branch._id,
+        branchName: branch.name,
+      }
+    })
+  }
   return (
-    <div>
+    <div className="branch-list-container">
       <h2>All Branches</h2>
-      <table style={{ border: "1px solid black" }}>
-        <thead style={{ border: "1px solid black" }}>
+      <table className="branch-table">
+        <thead>
           <tr>
-            <th style={{ border: "1px solid black" }}>Branch Name</th>
+            <th>Branch Name</th>
             <th>Location</th>
             <th>Chairs</th>
           </tr>
@@ -59,16 +70,27 @@ const BranchList = () => {
               <td>{branch.chairs}</td>
               {/* <td>{index}</td> */}
               <td>
-                <button onClick={() => handleDetailsClick(branch)}>
+                <button
+                  className="details-btn"
+                  onClick={() => handleDetailsClick(branch)}
+                >
                   Details
+                </button>
+                {" "}
+                <button onClick={() => handleReportsClick(branch)}>
+                  Show Reports
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
       {branches.length > 0 && (
-        <button onClick={() => handleAllChairOverviewClick(branches[0])}>
+        <button
+          className="view-all-btn"
+          onClick={() => handleAllChairOverviewClick()}
+        >
           View All Chair Details
         </button>
       )}

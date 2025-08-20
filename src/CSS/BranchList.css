@@ -1,0 +1,66 @@
+.branch-list-container {
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.branch-list-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.branch-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.branch-table th,
+.branch-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.branch-table th {
+  background-color: #4f8ef7;
+  color: white;
+}
+
+.branch-table tr:hover {
+  background-color: #f1f7ff;
+}
+
+.details-btn {
+  background: #4f8ef7;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.details-btn:hover {
+  background: #3a6edc;
+}
+
+.view-all-btn {
+  margin-top: 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: block;
+  margin-left: auto;
+}
+
+.view-all-btn:hover {
+  background: #218838;
+}

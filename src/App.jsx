@@ -12,6 +12,8 @@ import BranchList from './BranchList.jsx';
 import ChairDetails from './ChairDetails.jsx';
 import AddService from './AddService.jsx';
 import ChairOverview from './ChairOverview.jsx';
+import ServicePage from './ServicePage.jsx';
+import DailyReport from './DailyReport.jsx';
 
 function App() {
   //const [count, setCount] = useState(0)
@@ -28,6 +30,8 @@ function App() {
             <Route path='/chairdetails' element={<ChairDetails/>}></Route>
             <Route path='/addservice' element={<AddService/>}></Route>
             <Route path='/chairoverview' element={<ChairOverview/>}></Route>
+            <Route path='/servicepage' element={<ServicePage/>}></Route>
+            <Route path='/dailyreport' element={<DailyReport/>}></Route>
           </Routes>
         </BrowserRouter>
       </div>

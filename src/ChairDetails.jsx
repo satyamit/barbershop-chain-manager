@@ -1,13 +1,15 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import "./CSS/ChairDetails.css";
 const ChairDetails = () => {
   const [chairs, setChairs] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const chairCount = parseInt(location.state?.chairCount || 0);
   const branchName = location.state?.branchName;
-
+  const branchId = location.state?.branchId;
+  console.log("branchId inside ChairDetails ",branchId);
   useEffect(() => {
     const chairData = [];
     for (let i = 1; i <= chairCount; i++) {
@@ -26,21 +28,48 @@ const ChairDetails = () => {
     updated[index][field] = value;
     setChairs(updated);
   };
-  const handleSubmit = () => {
-    axios
-      .post("http://localhost:3001/chairdetails", {
+
+  const handleSubmit = async() => {
+    if(!branchId){
+      alert("Missing branchId. Cannot save chairs.")
+    }
+
+    try{
+      const payload = {
+        branchId,
         branchName,
         chairs,
-      })
-      .then((res) => {
-        alert("chair details saved succcessfully");
-      })
-      .catch((err) => {
-        console.error("Error ");
-      });
+      }
+      console.log("Sending chair Details",payload);
+    await axios
+      .post("http://localhost:3001/chairdetails",payload);
+      alert("Chair Details saved successfully");
+      navigate("/branchlist");
+      }catch(err)  {
+        console.error("Error while saving chair details ");
+        alert("Error saving chairs");
+      };
   };
+
+  // const handleAllChairOverviewClick = () =>{
+  //   Navigate(`/chairoverview`,{
+  //     state:{
+  //       branchId
+  //     }
+  //   })
+  // } 
+  // const handleServiceClick = (chair) =>{
+  //   navigate("/servicepage",{
+  //     state:{
+  //       branchId,
+  //       branchName,
+  //       chairNumber:chair.chairNumber,
+  //       employeeName:chair.employeeName
+  //     }
+  //   })
+  // }
   return (
-    <div>
+    <div className="chair-details-container">
       <h2>ChairDetails</h2>
       <h2>{branchName}</h2>
       {/* <form action="">
@@ -55,7 +84,7 @@ const ChairDetails = () => {
           placeholder=""
         />
       </form> */}
-      <table>
+      <table className="chair-table">
         <thead>
           <tr>
             <th>Chair</th>
@@ -73,11 +102,13 @@ const ChairDetails = () => {
                   type="text"
                   value={chair.employeeName}
                   placeholder="Name"
+                  className="chair-input"
                   onChange={(e) =>
                     handleChange(index, "employeeName", e.target.value)
                   }
                 />
               </td>
+              {/* <td><button onClick={()=> handleServiceClick(chair)} >service</button></td> */}
               {/* <td>
                   <input
                     type="text"
@@ -99,14 +130,15 @@ const ChairDetails = () => {
             </tr>
           ))}
           <tr>
-            <td>
-              <button onClick={() => handleSubmit()}>
+            <td colSpan="2" style={{ textAlign: "center" }}>
+              <button className="submit-btn" onClick={() => handleSubmit()}>
                 Submit Chair Details
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+      <button onClick={() => handleAllChairOverviewClick()}>View All Chair Details inside Chair Details</button>
     </div>
   );
 };

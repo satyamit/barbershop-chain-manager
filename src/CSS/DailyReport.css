@@ -1,0 +1,87 @@
+.daily-report-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.daily-report-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.date-filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.date-filters label {
+  font-weight: bold;
+  color: #444;
+}
+
+.date-filters input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn {
+  background: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn:hover {
+  background: #0056b3;
+}
+
+.report-preview {
+  margin-top: 25px;
+}
+
+.report-preview h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.report-table th {
+  background: #f8f8f8;
+  font-weight: bold;
+  color: #444;
+}
+
+.download-btn {
+  display: block;
+  margin: 20px auto 0 auto;
+  background: #28a745;
+}
+
+.download-btn:hover {
+  background: #1e7e34;
+}
