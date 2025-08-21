@@ -138,7 +138,6 @@ const ChairDetails = () => {
           </tr>
         </tbody>
       </table>
-      <button onClick={() => handleAllChairOverviewClick()}>View All Chair Details inside Chair Details</button>
     </div>
   );
 };

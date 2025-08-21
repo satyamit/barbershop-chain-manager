@@ -1,3 +1,4 @@
+const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,7 +11,14 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect("mongodb://127.0.0.1:27017/employee");
+const PORT = process.env.PORT || 3001;
+const MONGO_URI = process.env.MONGO_URI;
+// mongoose
+//   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => console.log(" MongoDB connected"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
+mongoose.connect(process.env.MONGO_URI);
+
 mongoose.set("debug",true); // log mongo series
 
 app.get("/health",(req,res)=>res.send("OK"));
@@ -23,7 +31,8 @@ app.get("/health",(req,res)=>res.send("OK"));
 //     .then(employees => res.json(employees))
 //     .catch(err => res.json(err))
 // })
-// ✅ Register route
+
+//  Register route
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
@@ -325,6 +334,6 @@ app.get("/getreport", async (req, res) => {
 
 
 
-app.listen(3001, () => {
-  console.log("Server is running");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
