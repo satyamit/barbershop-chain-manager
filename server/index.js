@@ -51,7 +51,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// ✅ Login route
+//Login route
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -116,11 +116,11 @@ app.post("/chairdetails", async (req, res) => {
 //     .catch((err) => res.json(err));
 // });
 
-// ✅ Get all chairs for a specific branch
+// Get all chairs for a specific branch
 // app.get("/getchairdetails/:branchId", async (req, res) => {
 //   try {
 //     const { branchId } = req.params;
-//     console.log("📌 Fetching chairs for branchId:", branchId);
+//     console.log("Fetching chairs for branchId:", branchId);
 
 //     // Assuming your chairs collection has branchId field
 //     //const chairs = await Chairs.find({ branchId: branchId });
@@ -132,7 +132,7 @@ app.post("/chairdetails", async (req, res) => {
 
 //     res.json(chairs);
 //   } catch (err) {
-//     console.error("❌ Error fetching chairs:", err);
+//     console.error("Error fetching chairs:", err);
 //     res.status(500).json({ error: "Failed to fetch chairs" });
 //   }
 // });
@@ -268,7 +268,7 @@ app.post('/servicepage', async (req, res) => {
 //   try {
 //     const { branchId, branchName, startDate, endDate } = req.query;
 
-//     console.log("🔥 Query received:", req.query);
+//     console.log("Query received:", req.query);
 
 //     const filter = {};
 
@@ -290,13 +290,13 @@ app.post('/servicepage', async (req, res) => {
 //       const end = new Date(endDate);
 //       end.setHours(23, 59, 59, 999);
 //       filter.createdAt = { $gte: start, $lte: end };
-//       console.log("📅 Date range:", filter.createdAt);
+//       console.log("Date range:", filter.createdAt);
 //     } else {
 //       console.log("⏱️ No date filter applied");
 //     }
 
 //     const report = await ServiceModel.find(filter).sort({ createdAt: 1 });
-//     console.log("📊 MongoDB result count:", report.length);
+//     console.log("MongoDB result count:", report.length);
 
 //     res.json(report);
 //   } catch (err) {
@@ -310,20 +310,20 @@ app.get("/getreport", async (req, res) => {
   try {
     const { branchId, startDate, endDate } = req.query;
 
-    console.log("🔥 Query received:", req.query);
+    console.log("Query received:", req.query);
 
     const start = new Date(startDate);
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999);
 
-    console.log("📅 Converted dates:", start, end);
+    console.log("Converted dates:", start, end);
 
     const report = await ServiceModel.find({
       branchId: new mongoose.Types.ObjectId(branchId),
       createdAt: { $gte: start, $lte: end }
     });
 
-    console.log("📊 MongoDB result:", report);
+    console.log("MongoDB result:", report);
 
     res.json(report);
   } catch (err) {

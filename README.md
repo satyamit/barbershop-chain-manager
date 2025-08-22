@@ -1,4 +1,4 @@
-# Barbershop-Chain-Manager
+# BeautyBranch
 A full-stack web application to manage multiple salon branches, chairs, employees, and services with daily PDF reporting.
 Built with React, Node.js/Express, MongoDB, and jsPDF.
 
