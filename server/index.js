@@ -1,15 +1,23 @@
 const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const EmployeeModel = require("./Models/Employee");
 const BranchModel = require("./Models/CreateBranch");
 const ChairDetailsModel = require("./Models/ChairDetails");
 const ServiceModel = require("./Models/ServicePage");
-
+const UserModel = require("./Models/Users");
+const CustomerModel = require("./Models/Customer");
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+const twilio = require("twilio");
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI;
@@ -19,9 +27,9 @@ const MONGO_URI = process.env.MONGO_URI;
 //   .catch((err) => console.error("MongoDB connection error:", err));
 mongoose.connect(process.env.MONGO_URI);
 
-mongoose.set("debug",true); // log mongo series
+mongoose.set("debug", true); // log mongo series
 
-app.get("/health",(req,res)=>res.send("OK"));
+app.get("/health", (req, res) => res.send("OK"));
 
 //mongoose.connect("mongodb://127.0.0.1:27017/branchManager");
 //mongodb://localhost:27017/
@@ -32,22 +40,46 @@ app.get("/health",(req,res)=>res.send("OK"));
 //     .catch(err => res.json(err))
 // })
 
-//  Register route
-app.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+//check if admin exists
+app.get("/check-admin", async (req, res) => {
+  const admin = await UserModel.findOne({ role: "admin" });
+  res.json({ exists: !!admin });
+});
 
+//  Register route
+app.post("/signup", async (req, res) => {
   try {
-    // Check if email already exists
-    const existingUser = await EmployeeModel.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already registered" });
+    const { email, password, role } = req.body;
+    if (!email || !password || !role) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Create new user
-    const newUser = await EmployeeModel.create({ email, password });
-    res.status(200).json({ message: "Registration successful", user: newUser });
+    if (role === "admin") {
+      // only one admin can exists
+      const existingAdmin = await UserModel.findOne({ role: "admin" });
+      if (existingAdmin) {
+        return res.status(403).json({ message: "Admin already exists!" });
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new UserModel({ email, password: hashedPassword, role });
+    await user.save();
+    res.json({ message: `${role} gernerated successfully` });
+
+    // if (existingUser) {
+    //   return res.status(400).json({ message: "Email already registered" });
+    // }
+
+    // // Create new user
+    // const newUser = await EmployeeModel.create({ email, password });
+    // res.status(200).json({ message: "Registration successful", user: newUser });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err });
+    console.error("SignUp error", err);
+    res
+      .status(500)
+      .json({ message: "Registration Failed", error: err.message });
   }
 });
 
@@ -56,25 +88,58 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await EmployeeModel.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password" });
     }
-
     res.status(200).json({ message: "Login successful", user });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err });
   }
 });
 
-app.post("/createbranch", (req, res) => {
-  BranchModel.create(req.body)
-    .then((branch) => res.json(branch))
-    .catch((err) => res.json(arr));
+// app.post("/createbranch", (req, res) => {
+//   BranchModel.create(req.body)
+//     .then((branch) => res.json(branch))
+//     .catch((err) => res.json(err));
+// });
+
+app.post("/createbranch", async (req, res) => {
+  try {
+    const { name, location, chairs, managerEmail, managerPassoword } = req.body;
+
+    //create branch
+    const newBranch = new BranchModel({
+      name,
+      location,
+      chairs,
+    });
+    const savedBranch = await newBranch.save();
+
+    //Create the manager (linked to branch)
+    if (managerEmail && managerPassoword) {
+      const hashedPassword = await bcrypt.hash(managerPassoword, 10);
+
+      const manager = new UserModel({
+        email: managerEmail,
+        password: hashedPassword,
+        role: "manager",
+        branchId: savedBranch._id,
+      });
+      await manager.save();
+    }
+
+    res
+      .status(200)
+      .json({ message: "Branch and Manager created successfully" });
+  } catch (err) {
+    console.error("Error creating branch & manager:", err);
+    res.status(500).json({ message: "Failed to create branch & manager" });
+  }
 });
 
 app.get("/getbranches", (req, res) => {
@@ -160,19 +225,25 @@ app.get("/getallchairdetails", (req, res) => {
 //   .catch((err) => res.json(err))
 // })
 
-
 // Save services for a chair
-app.post('/servicepage', async (req, res) => {
+app.post("/servicepage", async (req, res) => {
   try {
-    const { branchId, branchName, chairNumber, employeeName, services } = req.body;
+    const { branchId, branchName, chairNumber, employeeName, services } =
+      req.body;
 
-    if (!branchId || !branchName || !chairNumber || !employeeName || !services.length) {
+    if (
+      !branchId ||
+      !branchName ||
+      !chairNumber ||
+      !employeeName ||
+      !services.length
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const branch = await BranchModel.findById(branchId);
-    if(!branch){
-      return res.status(404).json({error: "Branch not found"});
+    if (!branch) {
+      return res.status(404).json({ error: "Branch not found" });
     }
 
     const newService = new ServiceModel({
@@ -180,7 +251,7 @@ app.post('/servicepage', async (req, res) => {
       branchName: branch.name,
       chairNumber,
       employeeName,
-      services
+      services,
     });
 
     await newService.save();
@@ -305,7 +376,6 @@ app.post('/servicepage', async (req, res) => {
 //   }
 // });
 
-
 app.get("/getreport", async (req, res) => {
   try {
     const { branchId, startDate, endDate } = req.query;
@@ -320,7 +390,7 @@ app.get("/getreport", async (req, res) => {
 
     const report = await ServiceModel.find({
       branchId: new mongoose.Types.ObjectId(branchId),
-      createdAt: { $gte: start, $lte: end }
+      createdAt: { $gte: start, $lte: end },
     });
 
     console.log("MongoDB result:", report);
@@ -332,7 +402,132 @@ app.get("/getreport", async (req, res) => {
   }
 });
 
+//registerpage
+app.post("/registerpage", async (req, res) => {
+  try {
+    const { username, password, role } = req.body;
 
+    //check if any admin exists
+    const existingAdmin = await UserModel.findOne({ role: "admin" });
+
+    let finalRole = role || "manager";
+    if (!existingAdmin) {
+      finalRole = "admin";
+    } else if (role === "admin") {
+      return res
+        .status(403)
+        .json({ message: "Only an existing Admin can create another Admin" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new UserModel({
+      username,
+      password: hashedPassword,
+      role: finalRole,
+    });
+    await newUser.save();
+
+    res.json({ message: "User registered", role: finalRole });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "User registered", role: finalRole });
+  }
+});
+
+app.post("/loginpage", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await UserModel.findOne({ username });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
+
+    // generate JWT
+    const token = jwt.sign({ id: user._id, role: user.role }, "secretkey", {
+      expiresIn: "1d",
+    });
+
+    res.json({ message: "Login successful", role: user.role, token });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Login failed" });
+  }
+});
+
+app.post("/add-user", async (req, res) => {
+  try {
+    const { username, password, role } = req.body;
+
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Only Admin can add new users" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new UserModel({ username, password: hashedPassword, role });
+    await newUser.save();
+
+    res.json({ message: "New user created", role });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error creating user" });
+  }
+});
+
+//add a new customer
+app.post("/customer", async (req, res) => {
+  try {
+    const { customerName, mobile, amount, paymentmode } = req.body;
+
+    if (!customerName || !mobile || !amount || !paymentmode) {
+      return res.status(400).json({ error: "All fields are required:" });
+    }
+
+    const customer = new CustomerModel({
+      customerName,
+      mobile,
+      amount,
+      paymentmode,
+    });
+
+    await customer.save();
+
+    //send whatsapp message
+    const formattedNumber = `whatsapp:+91${mobile}`;
+    const message = await client.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: formattedNumber,
+      body: `Hi ${customerName}, thanks for visiting! We hope to see you again soon 💇‍♂️✂️`,
+    });
+
+    res.json({ success: true, message: "Customer added and WhatsApp sent!" });
+  } catch (err) {
+    console.error("Error adding customer: ", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/send-whatsapp", async (req, res) => {
+  try {
+    const { mobile, customerName } = req.body;
+
+    // Format: whatsapp:+91xxxxxxxxxx
+    const formattedNumber = `whatsapp:+91${mobile}`;
+
+    const message = await client.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: formattedNumber,
+      body: `Hi ${customerName}, thanks for visiting! We hope to see you again soon 💇‍♂️✂️`,
+    });
+
+    res.json({ success: true, sid: message.sid });
+  } catch (err) {
+    console.error("WhatsApp send error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

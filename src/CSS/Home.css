@@ -1,0 +1,130 @@
+/* .star-container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  text-align: center;
+}
+
+/* Header */
+/*.star-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: white;
+  border-bottom: 2px solid red;
+}
+
+.star-logo {
+  height: 60px;
+  margin-right: 10px;
+}
+
+.star-title {
+  font-size: 28px;
+  color: red;
+  font-weight: bold;
+}
+
+/* Hero with background image */
+/*.star-hero {
+  background: url('/shop-board.jpg') no-repeat center center/cover;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.overlay {
+  background: rgba(255, 0, 0, 0.6);
+  color: white;
+  padding: 20px 40px;
+  border-radius: 8px;
+}
+
+.overlay h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+/* Actions */
+/*.star-actions {
+  margin: 30px 0;
+}
+
+.star-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  margin: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.star-btn:hover {
+  background: darkred;
+}
+
+/* Footer */
+/*.star-footer {
+  background: red;
+  color: white;
+  padding: 15px;
+  margin-top: 40px;
+  font-size: 14px;
+} */
+
+.landing-container {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+              url('/images/salon-bg.jpg') center/cover no-repeat;
+  color: #fff;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.book-btn {
+  padding: 12px 25px;
+  margin-top: 20px;
+  background: #e63946;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.about, .services, .contact {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.service-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.service-card {
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 10px;
+  width: 200px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.whatsapp-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #25D366;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}

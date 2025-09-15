@@ -74,7 +74,7 @@ const BranchList = () => {
                   className="details-btn"
                   onClick={() => handleDetailsClick(branch)}
                 >
-                  Details
+                  Chair Details
                 </button>
                 {" "}
                 <button onClick={() => handleReportsClick(branch)}>

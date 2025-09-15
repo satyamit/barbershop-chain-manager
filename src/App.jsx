@@ -14,6 +14,11 @@ import AddService from './AddService.jsx';
 import ChairOverview from './ChairOverview.jsx';
 import ServicePage from './ServicePage.jsx';
 import DailyReport from './DailyReport.jsx';
+import Home from './Home.jsx';
+import RegisterPage from './RegisterPage.jsx';
+import LoginPage from './LoginPage.jsx';
+import ManageUsers from './ManageUsers.jsx';
+import Customer from './Customer.jsx';
 
 function App() {
   //const [count, setCount] = useState(0)
@@ -23,7 +28,8 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route path='/register' element={<SignUp/>}></Route>
+            <Route path='/home' element={<Home/>}></Route>
+            <Route path='/signup' element={<SignUp/>}></Route>
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/createbranch' element={<CreateBranch/>}></Route>
             <Route path='/branchlist' element={<BranchList/>}></Route>
@@ -32,6 +38,12 @@ function App() {
             <Route path='/chairoverview' element={<ChairOverview/>}></Route>
             <Route path='/servicepage' element={<ServicePage/>}></Route>
             <Route path='/dailyreport' element={<DailyReport/>}></Route>
+
+            <Route path='/registerpage' element={<RegisterPage/>}></Route>
+            <Route path='/loginpage' element={<LoginPage/>}></Route>
+            <Route path='/manageusers' element={<ManageUsers/>}></Route>
+
+            <Route path='/customer' element={<Customer/>}></Route>
           </Routes>
         </BrowserRouter>
       </div>
